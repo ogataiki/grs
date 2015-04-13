@@ -10,5 +10,37 @@
     <body>
         <h1>Home Page</h1>
         <p>{{message}}</p>
+        <form method="post" action="/">
+        <table>
+            <tr>
+            <th>名前：</th>
+            <td><input type="text" name="nickname" /></td>
+            </tr>
+            <tr>
+            <th>メッセージ：</th>
+            <td><textarea name="freetext"></textarea></td>
+            </tr>
+            <tr><th></th>
+            <td><input type="submit" value="送信" /></td></tr>
+        </table>
+        </form>
+        <form method="post" name="" action="/">
+        <input type="submit" value="送信" />
+        </form>
+        <hr />
+        <table border="1" width="500px">
+        <tr>
+        <th width="350px">メッセージ</th>
+        <th width="150px">送信者</th>
+        </tr>
+        {% for data in datas %}
+        <tr>
+	    <td>{{data.key.id}}</td>
+        <td>{{data.freetext}}<br />
+        ({{data.date}})</td>
+        <td>{{data.nickname}}</td>
+        </tr>
+        {% endfor %}
+        </table>
     </body>
 </html>
