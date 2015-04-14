@@ -24,9 +24,6 @@
             <td><input type="submit" value="送信" /></td></tr>
         </table>
         </form>
-        <form method="post" name="" action="/">
-        <input type="submit" value="送信" />
-        </form>
         <hr />
         <table border="1" width="500px">
         <tr>
@@ -35,12 +32,41 @@
         </tr>
         {% for data in datas %}
         <tr>
-	    <td>{{data.key.id}}</td>
         <td>{{data.freetext}}<br />
         ({{data.date}})</td>
         <td>{{data.nickname}}</td>
         </tr>
         {% endfor %}
         </table>
+        
+    	<h2>IDから</h2>
+    	<p>{{message2}}</p>
+    	<form method="get" action="/del">
+    	<table>
+        	<tr>
+        	<th>ID：</th>
+        	<td><input type="text" name="id" /></td>
+        	</tr>
+        	<tr><th></th>
+        	<td><input type="submit" value="送信" /></td></tr>
+    	</table>
+    	</form>
+    	<hr />
+    	<table border="1" width="500px">
+    	<tr>
+    	<th width="50px">ID</th>
+    	<th width="300px">メッセージ</th>
+    	<th width="150px">送信者</th>
+    	</tr>
+    	{% for data in datas %}
+    	<tr>
+    	<td>{{data.key.id}}</td>
+        <td>{{data.freetext}}<br />
+        ({{data.date}})</td>
+        <td>{{data.nickname}}</td>
+    	</tr>
+    	{% endfor %}
+    	</table>
+    <a href="{{ logout_url }}">ログアウト</a>    	
     </body>
 </html>
