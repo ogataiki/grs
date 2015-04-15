@@ -52,6 +52,32 @@ class InputIDHandler(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'text/html'
         self.response.out.write(html)
 
+class EditHandler(webapp2.RequestHandler):
+    @login_required
+    def get(self):
+        id = self.request.get('id')
+        if id:
+            data = UserData.get_by_id(long(id))
+            msg = 'このエンティティを編集します。'
+        else:
+            data = None
+            msg = '編集するエンティティのIDが指定されていません。'
+        params = {'data':data, 'message':msg}
+        fpath = os.path.join(os.path.dirname(__file__),'views','edit.html')
+        html = template.render(fpath,params)
+        self.response.headers['Content-Type'] = 'text/html'
+        self.response.out.write(html)
+   
+    def post(self):
+        id = self.request.get('id')
+        nm = self.request.get('name')
+        msg = self.request.get('msg')
+        data = UserData.get_by_id(long(id))
+        data.nickname = nm
+        data.freetext = msg
+        data.put()
+        self.redirect('/')
+
 class DeleteHandler(webapp2.RequestHandler):
     def get(self):
         usr = users.get_current_user()
@@ -92,5 +118,6 @@ class UserData(ndb.Model):
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
     ('/inputid', InputIDHandler),
+    ('/edit', EditHandler),
     ('/del', DeleteHandler)
 ], debug=True)
