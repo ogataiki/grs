@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from google.appengine.ext import ndb
-import modeluser
 import modelgame
 
 class ModelReview(ndb.Model):
-    reviewer = ndb.KeyProperty(kind=ModelUser)
+    reviewer = ndb.StringProperty(required=True)
     game = ndb.KeyProperty(kind=ModelGame)
     stars = ndb.IntegerProperty(required=True)
     reviewtext = ndb.StringProperty(required=True)

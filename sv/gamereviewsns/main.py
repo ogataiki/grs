@@ -7,35 +7,45 @@ from google.appengine.ext.webapp import template
 import logging
 
 from google.appengine.ext import ndb
-from google.appengine.ext import db
+import json as simplejson
 
 from google.appengine.ext.webapp.util import login_required
 from google.appengine.api import users
 
+from model.modeluser import *
+
 class MainHandler(webapp2.RequestHandler):
     @login_required
     def get(self):
-    
-        self.response.headers['Content-Type'] = 'text/plain'
-        logging.info("============= /main ==============")
+
+        user = users.get_current_user()
+        if user:
+            q = ndb.gql("SELECT * FROM ModelUser WHERE userid = :1", user.user_id())
+            modeluser = q.get()
+            if modeluser:
+                logging.info('--- modeluser select success ---')
+            else:
+                modeluser = ModelUser(userid=user.user_id(), nickname=user.nickname(), freetext="")
+                modeluser.put()
+        else:
+            self.redirect(users.create_login_url(self.request.uri))
+            return
         
-        datas = UserData.query().order(-UserData.date).fetch(10)
-        params = {	\
-        	'datas':datas,	\
-        	'message':'項目を記入し送信してください。',	\
-        	'logout_url':users.create_logout_url('/') }
-        fpath = os.path.join(os.path.dirname(__file__),'views','home.html')
-        html = template.render(fpath,params)
-        self.response.headers['Content-Type'] = 'text/html'
-        self.response.out.write(html)
+        params = {'nickname':modeluser.nickname,'freetext':modeluser.freetext}
+        json_data = {"response_data":params}
+        self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        self.response.out.write(simplejson.dumps(json_data,ensure_ascii=False,sort_keys=True))
         
     def post(self):
-        uid = 'aaaa1234'
-        em = 'aaa1234@gmail.com'
-        nn = self.request.get('nickname')
-        ft = self.request.get('freetext')
-        obj = UserData(userid=uid, email=em, nickname=nn, freetext=ft)
-        obj.put()
+        user = users.get_current_user()
+        if user:
+            q = ndb.gql("SELECT * FROM ModelUser WHERE userid = :1", user.user_id())
+            modeluser = q.get()
+            if modeluser:
+                logging.info('--- modeluser select success ---')
+            else:
+                modeluser = ModelUser(userid=user.user_id(), nickname=user.nickname(), freetext="")
+                modeluser.put()
         self.redirect('/')
 
 class InputIDHandler(webapp2.RequestHandler):
